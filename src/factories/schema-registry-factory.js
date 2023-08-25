@@ -508,27 +508,18 @@ var SchemaRegistryFactory = function ($rootScope, $http, $location, $q, $log, Ut
         function success(allSubjectNames) {
           // 2. Get full details of subject's final versions
           var urlFetchLatestCalls = [];
+          CACHE = [];
           angular.forEach(allSubjectNames, function (subject) {
-            urlFetchLatestCalls.push($http.get(env.SCHEMA_REGISTRY() + '/subjects/' + subject + '/versions/latest'));
+            var cacheData = {
+              subjectName: subject
+            };
+            CACHE.push(cacheData);
           });
-          $q.all(urlFetchLatestCalls).then(function (latestSchemas) {
-            CACHE = []; // Clean up existing cache - to replace with new one
-            angular.forEach(latestSchemas, function (result) {
-              var data = result.data;
-              var cacheData = {
-                version: data.version,  // version
-                id: data.id,            // id
-                schema: data.schema,    // schema - in String - schema i.e. {\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}
-                Schema: JSON.parse(data.schema), // js type | name | doc | fields ...
-                subjectName: data.subject
-              };
-              CACHE.push(cacheData);
-            });
-            $log.debug("  pipeline : get-latest-subjects-refresh-cache in [ " + (new Date().getTime() - start) + " ] msec");
-            $rootScope.showSpinner = false;
-            $rootScope.Cache = CACHE;
-            deferred.resolve(CACHE);
-          });
+            
+          $log.debug("  pipeline : get-latest-subjects-refresh-cache in [ " + (new Date().getTime() - start) + " ] msec");
+          $rootScope.showSpinner = false;
+          $rootScope.Cache = CACHE;
+          deferred.resolve(CACHE);
         });
 
       return deferred.promise;

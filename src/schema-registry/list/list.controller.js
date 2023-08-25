@@ -7,6 +7,7 @@ var SubjectListCtrl = function ($scope, $rootScope, $log, $mdMedia, SchemaRegist
   $scope.readonlyMode = env.readonlyMode();
 
   function addCompatibilityValue() {
+
     angular.forEach($rootScope.allSchemas, function (schema) {
       SchemaRegistryFactory.getSubjectConfig(schema.subjectName).then(
         function success(config) {
@@ -50,7 +51,7 @@ var SubjectListCtrl = function ($scope, $rootScope, $log, $mdMedia, SchemaRegist
     var promise = SchemaRegistryFactory.refreshLatestSubjectsCACHE();
     promise.then(function (cachedData) {
       $rootScope.allSchemas = cachedData;
-      addCompatibilityValue();
+      // addCompatibilityValue();
     }, function (reason) {
       $log.error('Failed at loadCache : ' + reason);
     }, function (update) {
